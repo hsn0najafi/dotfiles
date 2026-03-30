@@ -1,45 +1,66 @@
+ZSH_THEME="robbyrussell"
 
-sudo swapoff --all
-
-# ZSH_THEME="jonathan"
-ZSH_THEME="strug"
-# ZSH_THEME="robbyrussell"
+zstyle ':omz:update' mode disabled
+export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 
 plugins=(
-  git
-  z
-  zsh-autosuggestions        # clone from -> https://github.com/zsh-users/zsh-autosuggestions.git
-  zsh-syntax-highlighting    # clone from -> https://github.com/zsh-users/zsh-syntax-highlighting.git
-  docker
+	git
+	zsh-autosuggestions     # https://github.com/zsh-users/zsh-autosuggestions.git
+	zsh-syntax-highlighting # https://github.com/zsh-users/zsh-syntax-highlighting.git
 )
 
-source /home/hsn/.oh-my-zsh/oh-my-zsh.sh
+source /Users/r00t/.oh-my-zsh/oh-my-zsh.sh
 
-# Aliases
+export EDITOR="nvim"
 
 alias l="ls -trhFs"
 alias a="ls -trhFas"
 alias ll="ls -ltrhFs"
 alias la="ls -ltrhFas"
-alias lt="tree -aFI 'node_modules|public|.git|.next'"
-alias ltl="tree -aFL"
-alias lg="git status -s"
-
+alias t="tree -aFI 'node_modules|public|dist|data|.git'"
+alias tl="tree -aFIL 'node_modules|public|dist|.git'"
 alias c="clear"
 alias e="exit"
-alias rm="rm -rf"
-alias cp="cp -r"
+alias nm="find . -name 'node_modules' -type d -prune"
+alias prune="docker container prune && docker network prune && docker image prune && docker volume prune -a"
+alias us="git submodule update --init --remote"
+alias rc="docker compose up --build --force-recreate -V -d"
+alias sc="docker ps -aq | xargs docker stop"
+alias cl="claude"
+alias cdx="codex"
+# alias gwa="git worktree add . -b \"$(basename "$PWD")\""
+#alias gwd="git worktree remove ."
+alias vim="nvim"
 
-alias servers="ss -nlt"
+#gwa() {
+#  local b_name="$1"
+#  if [ -z "$b_name" ]; then
+#    b_name="z--$(printf "%04d" $((RANDOM % 10000)))--wt"
+#  fi
+#  mkdir -p "$b_name" && cd "$b_name" && git worktree add . -b "$(basename "$PWD")"
+#}
 
-alias zshConfig="nvim ~/.zshrc"
-alias vimConfig="nvim ~/.config/nvim/init.vim"
-alias gitConfig="nvim ~/.gitconfig"
-alias mp="mpv ~/Music"
-alias nets="netstat -na | grep : "
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
-alias screenCast="ffmpeg -video_size 1024x768 -framerate 25 -f x11grab -i :0.0+0,0 -f pulse -ac 2 -i default output.mkv"
+autoload -U add-zsh-hook
+load-nvmrc() {
+	local nvmrc_path="$(nvm_find_nvmrc)"
+	if [ -n "$nvmrc_path" ]; then
+		local nvmrc_node_version="$(nvm version $(cat "$nvmrc_path"))"
+		if [ "$nvmrc_node_version" != "$(nvm version)" ]; then
+			nvm use
+		fi
+	elif [ -n "$(PWD=$OLDPWD nvm_find_nvmrc)" ] && [ "$(nvm version)" != "$(nvm version default)" ]; then
+		nvm use default
+	fi
+}
+add-zsh-hook chpwd load-nvmrc
+load-nvmrc
 
-alias ko="c && gss"
+. "$HOME/.local/bin/env"
 
-
+fpath=(/Users/r00t/.docker/completions $fpath)
+autoload -Uz compinit
+compinit

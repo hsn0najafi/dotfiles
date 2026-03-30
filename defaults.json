@@ -1,0 +1,20 @@
+{
+  "mode": "interactive",
+  "granularity": "fine",
+  "model_profile": "quality",
+  "commit_docs": true,
+  "parallelization": true,
+  "branching_strategy": "none",
+  "search_gitignored": true,
+  "workflow": {
+    "research": true,
+    "plan_check": true,
+    "verifier": true,
+    "nyquist_validation": false,
+    "auto_advance": true,
+    "research_before_questions": false,
+    "skip_discuss": true,
+    "discuss_mode": "standard"
+  },
+  "hooks": { "context_warnings": true }
+}
